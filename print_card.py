@@ -1,7 +1,6 @@
 #!/usr/bin/env python2.7
 
 import urllib2
-import codecs
 from bs4 import BeautifulSoup
 
 
