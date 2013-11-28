@@ -22,11 +22,12 @@ class Card:
   __card_id   = 'ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_numberRow'
 
   def __init__(self,gatherer_id, db_connection = None):
-    URL = self.__BASE_URL + gatherer_id
-
     self.db        = db_connection 
+    self.unique_id = gatherer_id
 
+    URL = self.__BASE_URL + gatherer_id
     self.soup      = BeautifulSoup(urllib2.urlopen(URL))
+
     self.name      = self.__extract_content(self.__name_id)
     self.mana      = self.__extract_mana(self.__mana_id)
     self.cmc       = self.__extract_content(self.__cmc_id)
@@ -79,7 +80,7 @@ class Card:
 
   def __normalize_string(self, string):
     if not all(ord(c) < 128 for c in string):
-      return unicodedata.normalize('NFKD', string.strip()).encode('ascii','ignore')
+      return string.strip()
     else:
       return string.strip()
   
@@ -95,7 +96,7 @@ class Card:
     if bs4content is not None:
       bs4images = bs4content.find_all('img')
       if bs4images is not None:
-        return self.__normalize_string(' '.join(image['alt'] for image in bs4images))
+        return self.__normalize_string(','.join('['+image['alt']+']' for image in bs4images))
     return ''
 
   def __extract_power(self,content_id):
@@ -111,20 +112,21 @@ class Card:
     return ''
 
   def save_card(self):
-    values = [self.name, self.mana, self.cmc, self.types, self.text, self.flavor,
+    values = [self.unique_id, self.name, self.mana, self.cmc, self.types, self.text, self.flavor,
 self.power, self.toughness, self.expansion, self.rarity, self.card_id, self.artist]
 
     for (i,value) in enumerate(values):
       values[i] = value.replace("'", "\\'")
 
-    create_card_query = """
+    create_card_query = u"""
 INSERT INTO cards (
-name, mana, cmc, types, text, flavor,
+ID, name, mana, cmc, types, text, flavor,
 power, toughness, expansion, rarity, card_id, artist
 ) VALUES (
-'%s', '%s', '%s', '%s', '%s', '%s',
+'%s', '%s', '%s', '%s', '%s', '%s', '%s',
 '%s', '%s', '%s', '%s', '%s', '%s'
 )""" % tuple(values)
+    create_card_query = create_card_query.encode('utf-8')
     self.db.query(create_card_query)
 
   def print_card(self):

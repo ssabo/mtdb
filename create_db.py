@@ -3,12 +3,13 @@
 import _mysql
 
 print "*******Creating Table*******"
-
 db = _mysql.connect('localhost', 'shaun', 'password', 'mtdb')
+drop_db = 'DROP TABLE cards'
+db.query(drop_db)
 
 create_db = """
 CREATE TABLE cards (
-  ID         INT NOT NULL AUTO_INCREMENT,
+  ID         INT NOT NULL,
   name       VARCHAR(100) NOT NULL,
   mana       VARCHAR(100),
   cmc        INT,
