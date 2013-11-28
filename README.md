@@ -1,4 +1,4 @@
 mtdb
 ====
 
-Magic the Gathering Gatherer Scraper
+Magic the Gathering Gatherer DB Scraper
