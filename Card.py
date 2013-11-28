@@ -112,7 +112,7 @@ class Card:
 
   def save_card(self):
     values = [self.name, self.mana, self.cmc, self.types, self.text, self.flavor,
-self.power, self.toughness, self.expansion, self.rarity, self.artist]
+self.power, self.toughness, self.expansion, self.rarity, self.card_id, self.artist]
 
     for (i,value) in enumerate(values):
       values[i] = value.replace("'", "\\'")
@@ -120,10 +120,10 @@ self.power, self.toughness, self.expansion, self.rarity, self.artist]
     create_card_query = """
 INSERT INTO cards (
 name, mana, cmc, types, text, flavor,
-power, toughness, expansion, rarity, artist
+power, toughness, expansion, rarity, card_id, artist
 ) VALUES (
 '%s', '%s', '%s', '%s', '%s', '%s',
-'%s', '%s', '%s', '%s', '%s'
+'%s', '%s', '%s', '%s', '%s', '%s'
 )""" % tuple(values)
     self.db.query(create_card_query)
 

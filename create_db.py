@@ -19,6 +19,7 @@ CREATE TABLE cards (
   toughness  VARCHAR(4),
   expansion  VARCHAR(100),
   rarity     VARCHAR(36),
+  card_id    INT,
   artist     VARCHAR(100),
   PRIMARY KEY (ID)
 )"""
