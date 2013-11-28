@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import urllib2
 import _mysql
-import unicodedata
 
 class Card:
 
