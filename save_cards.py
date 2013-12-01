@@ -17,7 +17,6 @@ working_list = []
 def add_card(item_id,tmp):
   card = Card(item_id, db)
   if not card.name == '':
-#    card.print_card()
     card.save_card()
   working_list.remove(item_id)
 
@@ -28,6 +27,11 @@ for item_id in range(start, 10000000):
       continue
     else:
       submitable = True
+  if item_id % 300 == 0:
+    while len(working_list) !=0:
+      continue
+    db = _mysql.connect('localhost', 'shaun', 'password', 'mtdb')
+
   if item_id % print_lines_mod == 0:
     print "%04d-%02d-%02dT%02d:%02d:%02d - %s" % (time.localtime().tm_year,
       time.localtime().tm_mon,
