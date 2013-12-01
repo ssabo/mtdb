@@ -24,7 +24,7 @@ class Card:
     self.db        = db_connection 
     self.unique_id = gatherer_id
 
-    URL = self.__BASE_URL + gatherer_id
+    URL = self.__BASE_URL + str(gatherer_id)
     self.soup      = BeautifulSoup(urllib2.urlopen(URL))
 
     self.name      = self.__extract_content(self.__name_id)
@@ -86,6 +86,8 @@ class Card:
   # extracts raw text from content ignoring images
   def __extract_text(self,content_id):
     bs4content = self.__extract_items(content_id)
+    if bs4content is None:
+      return ''
     bs4strings = bs4content.stripped_strings
     return self.__normalize_string(' '.join(string for string in bs4strings))
   
@@ -111,11 +113,15 @@ class Card:
     return ''
 
   def save_card(self):
-    values = [self.unique_id, self.name, self.mana, self.cmc, self.types, self.text, self.flavor,
+    raw_values = [self.unique_id, self.name, self.mana, self.cmc, self.types, self.text, self.flavor,
 self.power, self.toughness, self.expansion, self.rarity, self.card_id, self.artist]
+    values = []
 
-    for (i,value) in enumerate(values):
-      values[i] = value.replace("'", "\\'")
+    for (i,value) in enumerate(raw_values):
+      try:
+        values.append(value.replace("'", "\\'"))
+      except AttributeError:
+        values.append(raw_values[i])
 
     create_card_query = u"""
 INSERT INTO cards (
@@ -129,6 +135,7 @@ power, toughness, expansion, rarity, card_id, artist
     self.db.query(create_card_query)
 
   def print_card(self):
+    print "Unique    :    %s"      % self.unique_id
     print "Name      :    %s"      % self.name
     print "Mana      :    %s"      % self.mana
     print "CMC       :    %s"      % self.cmc
